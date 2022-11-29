@@ -53,7 +53,7 @@ export default function VideoCall(props) {
       }
     }
 
-    console.log(track);
+    console.log(users, start);
   }, [channelName, client, ready, track]);
 
   return (
