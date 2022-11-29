@@ -5,15 +5,32 @@ import {
   useMicrophoneAudioTrack,
   channelName,
 } from "./settings.js";
-import Controls from "./Controls";
 
 export default function VideoCall(props) {
   const { setInCall } = props;
   const [users, setUsers] = useState([]);
   const [start, setStart] = useState(false);
   const client = useClient();
-  const aaa = useMicrophoneAudioTrack();
-  const { ready, track } = aaa;
+  const { ready, track } = useMicrophoneAudioTrack();
+  const [trackState, setTrackState] = useState({ audio: true });
+
+  const mute = async (type) => {
+    if (type === "audio") {
+      await track.setEnabled(!trackState.audio);
+      console.log("audio is : " + track.enabled);
+      setTrackState((ps) => {
+        return { ...ps, audio: !ps.audio };
+      });
+    }
+  };
+
+  const leaveChannel = async () => {
+    await client.leave();
+    client.removeAllListeners();
+    track.close();
+    setStart(false);
+    setInCall(false);
+  };
 
   useEffect(() => {
     let init = async (name) => {
@@ -54,12 +71,15 @@ export default function VideoCall(props) {
     }
   }, [client, ready, track]);
 
+  console.log("user : " + users);
+  console.log("connection status : " + start);
   return (
     <>
-      {ready && track && (
-        <Controls track={track} setStart={setStart} setInCall={setInCall} />
-      )}
-      <p>{users + start}</p>
+      <button onClick={() => mute("audio")}>
+        {trackState.audio ? "Audio On" : "Audio Off"}
+      </button>
+
+      <button onClick={() => leaveChannel()}>Leave</button>
     </>
   );
 }
