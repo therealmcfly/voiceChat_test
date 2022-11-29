@@ -52,8 +52,6 @@ export default function VideoCall(props) {
         console.log(error);
       }
     }
-
-    console.log(users, start);
   }, [channelName, client, ready, track]);
 
   return (
@@ -61,6 +59,7 @@ export default function VideoCall(props) {
       {ready && track && (
         <Controls track={track} setStart={setStart} setInCall={setInCall} />
       )}
+      <p>{users + start}</p>
     </>
   );
 }
