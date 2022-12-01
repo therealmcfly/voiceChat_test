@@ -54,14 +54,16 @@ export default function VoiceChat() {
 
   //음소거 toggle
   const mute = async () => {
-    await track.setEnabled(!track.enabled);
-    await setMicState(track.enabled);
-    await console.log("Mic enable : " + track.enabled);
+    await track.setEnabled(!track.enabled).then(() => {
+      setMicState(track.enabled);
+      console.log("Mic enable : " + track.enabled);
+    });
   };
 
   const disableMic = async () => {
     await track.setEnabled(false);
     setMicState(false);
+    console.log("Mic enable : " + track.enabled);
   };
 
   //보이스쳇 퇴장 함수
