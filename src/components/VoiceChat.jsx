@@ -6,7 +6,7 @@ import {
   channelName,
 } from "./AgoraSettings.js";
 
-const isPresenter = true;
+const isPresenter = true; //true면 마이크 활성 버튼 보임
 
 export default function VoiceChat() {
   const client = useClient();
@@ -35,6 +35,8 @@ export default function VoiceChat() {
     }
 
     if (track) await client.publish([track]);
+
+    disableMic();
   };
 
   //보이스쳇 입장 함수
@@ -43,6 +45,7 @@ export default function VoiceChat() {
       try {
         await init(channelName);
         setInVoiceChannel(true);
+        console.log("currently in voice channel : " + inVoiceChannel);
       } catch (error) {
         console.log(error);
       }
@@ -56,12 +59,18 @@ export default function VoiceChat() {
     await console.log("Mic enable : " + track.enabled);
   };
 
+  const disableMic = async () => {
+    await track.setEnabled(false);
+    setMicState(false);
+  };
+
   //보이스쳇 퇴장 함수
   const leaveChannel = async () => {
     await client.leave();
     client.removeAllListeners();
     track.close();
     setInVoiceChannel(false);
+    console.log("currently in voice channel : " + inVoiceChannel);
   };
 
   return (
